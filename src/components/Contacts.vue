@@ -51,11 +51,17 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { Notyf } from 'notyf';
-import 'notyf/notyf.min.css';
 
 const WEB3FORMS_ACCESS_KEY = "263d6c45-7cfb-4cdb-9605-bc79236ea53a";
 const SITE_KEY = '6Lf7ToItAAAAAGZJj-xkxfpGq2SCRz8qUqiH0nhu';
 const subject = "New message from Portfolio Contact Form";
+
+// Initialize Notyf instance with default options
+const notyf = new Notyf({
+	duration: 4000,
+	position: { x: 'right', y: 'top' },
+	dismissible: true
+});
 
 const name = ref("");
 const email = ref("");
@@ -95,12 +101,6 @@ function resetRecaptcha() {
 
 // Form Submission
 const submitForm = async () => {
-	// Instantiate Notyf inside function execution so the DOM target is guaranteed
-	const notyf = new Notyf({
-		duration: 4000,
-		position: { x: 'right', y: 'top' }
-	});
-
 	if (!recaptchaToken.value) {
 		notyf.error("Please verify that you are not a robot.");
 		return;
