@@ -5,6 +5,6 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [vue()],
   build: {
-    cssMinify: 'esbuild' // Prevents LightningCSS keyframe errors during Vercel builds
+    cssMinify: false // Bypasses LightningCSS keyframe errors and esbuild dependency checks
   }
 })
