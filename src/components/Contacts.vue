@@ -32,7 +32,9 @@
 		        <!-- FIXED: Added "message" to v-model -->
 		        <textarea v-model="message" class="form-control custom-underline-input px-0" id="inquiryText" rows="3" placeholder="How can I help you?"></textarea>
 		    </div>
-
+		    <div class="d-flex justify-content-end mt-2">
+            <div ref="recaptchaContainer"></div>
+            </div>
 		    <!-- Submit Button -->
 		    <!-- FIXED: Proper ternary operator and closing brackets -->
 		    <button type="submit" class="btn w-100 py-3 fw-semibold text-uppercase tracking-wide text-white border-0" id="button" :disabled="isLoading">
@@ -47,8 +49,7 @@
 
 <!-- FIXED: Changed to <script setup> -->
 <script setup>
-	import { ref } from 'vue';
-	// FIXED: Corrected Notyf import
+	import { ref, onMounted, onBeforeUnmount } from 'vue';
 	import { Notyf } from 'notyf'; 
 	import 'notyf/notyf.min.css';
 
@@ -57,18 +58,22 @@
 	const subject = "New message from Portfolio Contact Form";
 
 	const name = ref("");
-	// FIXED: Changed second 'name' to 'email'
 	const email = ref(""); 
 	const message = ref("");
 	const isLoading = ref(false);
+	const recaptchaToken = ref(""); // Added missing ref
 
 	const submitForm = async () => {
+
+		if (!recaptchaToken.value) { // Fixed variable syntax
+			notyf.error("Please verify that you are not a robot.");
+			return;
+		}
+
 		isLoading.value = true;
 		try {
-            // FIXED: Typo 'fecth' to 'fetch'
 			const response = await fetch("https://api.web3forms.com/submit", {
 				method: "POST",
-                // FIXED: Typo 'header' to 'headers'
 				headers: {
 					"Content-Type": "application/json",
 					Accept: "application/json",
@@ -87,10 +92,9 @@
 				console.log(result);
 				isLoading.value = false;
 				notyf.success("Message Sent!");
-                // Optional: Clear form after success
-                name.value = "";
-                email.value = "";
-                message.value = "";
+				name.value = "";
+				email.value = "";
+				message.value = "";
 			}
 		} catch (error) {
 			console.log(error);
